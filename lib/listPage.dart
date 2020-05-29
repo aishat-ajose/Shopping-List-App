@@ -51,35 +51,38 @@ class _ListPageState extends State<ListPage> {
 
       body: Container(
         padding: EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _controller,
-                onChanged: (value) {
-                  name = value;
-                },
+        child: Text("hello")
+        // Form(
+        //   key: _formKey,
+        //   child: Column(
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     children: [
+        //       TextFormField(
+        //         controller: _controller,
+        //         onChanged: (value) {
+        //           name = value;
+        //         },
 
-              ),
-              IconButton(
-                icon: Icon(Icons.check) ,
-                onPressed: (){
-                  _controller.clear();
-                  String cat = containItem(db, name);
-                  foodItem = FoodItem(name: name, category: cat); 
-                  addItem(foodItem);
-                  Navigator.pop(context);
+        //       ),
+        //       IconButton(
+        //         icon: Icon(Icons.check) ,
+        //         onPressed: (){
+        //           _controller.clear();
+        //           String cat = containItem(db, name);
+        //           foodItem = FoodItem(name: name, category: cat); 
+        //           addItem(foodItem);
+        //           Navigator.pop(context);
               
-                },
-              )
-            ],
-          ),
-        ),
+        //         },
+        //       )
+        //     ],
+        //   ),
+        // ),
       ),
 
-      // floatingActionButton: FloatingActionButton(
+      floatingActionButton: MyFloatingActionButton()
+    );
+      // FloatingActionButton(
       //   child: Icon(Icons.add),
       //   onPressed: (){
 
@@ -89,8 +92,43 @@ class _ListPageState extends State<ListPage> {
       //     setState((){});
       //   },
       // ),
-    );     
+    // );     
   }
+}
+
+class MyFloatingActionButton extends StatefulWidget {
+  
+  @override
+  _MyFloatingActionButtonState createState() => _MyFloatingActionButtonState();
+}
+
+class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
+    Map db = {
+    "Poultry": ["Fish", "Meat","Chicken"],
+    "Grains": ["Rice", "Garri", "Beans"]
+  };
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _controller = new TextEditingController();
+
+  Map categories = {};
+
+  addItem(FoodItem item){
+    if (categories.containsKey(item.category)){
+      List<String> po = categories[item.category];
+      po.add(item.name);
+      categories.update(item.category, (value) => po);
+    }
+    else{
+      List<String> no = [item.name];
+      categories[item.category] = no;
+    }
+    print(categories);
+    setState(() {
+      
+    });
+  }
+
     containItem(Map db, String food){
     String result = "Uncategorized";
     
@@ -105,7 +143,53 @@ class _ListPageState extends State<ListPage> {
     
     return result;   
   }
-  
+
+
+  @override
+  Widget build(BuildContext context) {
+    
+    String name;
+    return FloatingActionButton(
+      onPressed: () {
+        showBottomSheet(
+            context: context,
+            builder: (context) => 
+            Container(
+            padding: EdgeInsets.all(20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextFormField(
+                    controller: _controller,
+                    onChanged: (value) {
+                      name = value;
+                    },
+
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.check) ,
+                    onPressed: (){
+                      _controller.clear();
+                      String cat = containItem(db, name);
+                       FoodItem foodItem = FoodItem(name: name, category: cat); 
+                      addItem(foodItem);
+                      Navigator.pop(context);
+                  
+                    },
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+        setState(() {
+        
+        });
+      },
+    );
+  }
 }
 
   
@@ -118,8 +202,8 @@ class _ListPageState extends State<ListPage> {
 // }
 
 // class _ListFormState extends State<ListForm> {
-//   final _formKey = GlobalKey<FormState>();
-//   final TextEditingController _controller = new TextEditingController();
+  // final _formKey = GlobalKey<FormState>();
+  // final TextEditingController _controller = new TextEditingController();
 
 
 //   Map db = {
