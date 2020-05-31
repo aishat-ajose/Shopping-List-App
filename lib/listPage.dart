@@ -1,6 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shoppinglist/models/foodItems.dart';
 import 'package:shoppinglist/models/userList.dart';
+
+
+Map categories = {};
 
 class ListPage extends StatefulWidget {
   final UserList userList;
@@ -12,38 +16,9 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _controller = new TextEditingController();
-
-
-  Map db = {
-    "Poultry": ["Fish", "Meat","Chicken"],
-    "Grains": ["Rice", "Garri", "Beans"]
-  };
 
   @override
   Widget build(BuildContext context) {
-
-    String name;
-    FoodItem foodItem;
-    Map categories = {}; 
-
-    addItem(FoodItem item){
-    if (categories.containsKey(item.category)){
-      List<String> po = categories[item.category];
-      po.add(item.name);
-      categories.update(item.category, (value) => po);
-    }
-    else{
-      List<String> no = [item.name];
-      categories[item.category] = no;
-    }
-    print(categories);
-    setState(() {
-      
-    });
-  }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.userList.title ?? "No title"),
@@ -51,48 +26,27 @@ class _ListPageState extends State<ListPage> {
 
       body: Container(
         padding: EdgeInsets.all(20),
-        child: Text("hello")
-        // Form(
-        //   key: _formKey,
-        //   child: Column(
-        //     mainAxisAlignment: MainAxisAlignment.center,
-        //     children: [
-        //       TextFormField(
-        //         controller: _controller,
-        //         onChanged: (value) {
-        //           name = value;
-        //         },
-
-        //       ),
-        //       IconButton(
-        //         icon: Icon(Icons.check) ,
-        //         onPressed: (){
-        //           _controller.clear();
-        //           String cat = containItem(db, name);
-        //           foodItem = FoodItem(name: name, category: cat); 
-        //           addItem(foodItem);
-        //           Navigator.pop(context);
-              
-        //         },
-        //       )
-        //     ],
-        //   ),
-        // ),
+        child: ListView.builder(
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            return Text(categories.length.toString());
+            //  _buildCategory(categories[index]);
+          }
+        )
       ),
 
       floatingActionButton: MyFloatingActionButton()
-    );
-      // FloatingActionButton(
-      //   child: Icon(Icons.add),
-      //   onPressed: (){
+    );  
+  }
 
-      //     Navigator.push(context,
-      //         MaterialPageRoute(builder: 
-      //         (context) =>  addItem()));
-      //     setState((){});
-      //   },
-      // ),
-    // );     
+  Widget _buildCategory(Map category){
+    return Container(
+      child: Column(
+        children: [
+          Container(child: Text(category[0],))
+        ],
+      ),
+    );
   }
 }
 
@@ -111,7 +65,7 @@ class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
 
   final TextEditingController _controller = new TextEditingController();
 
-  Map categories = {};
+  
 
   addItem(FoodItem item){
     if (categories.containsKey(item.category)){
@@ -194,98 +148,3 @@ class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
 
   
   
-
-// class  ListForm extends StatefulWidget 
-// {
-//   @override
-//   _ListFormState createState() => _ListFormState();
-// }
-
-// class _ListFormState extends State<ListForm> {
-  // final _formKey = GlobalKey<FormState>();
-  // final TextEditingController _controller = new TextEditingController();
-
-
-//   Map db = {
-//     "Poultry": ["Fish", "Meat","Chicken"],
-//     "Grains": ["Rice", "Garri", "Beans"]
-//   };
-
-  
-  
-
-  
-
-//   @override
-//   Widget build(BuildContext context) {
-//     String name;
-//     FoodItem foodItem;
-//     Map categories = {}; 
-//     addItem(FoodItem item){
-//     if (categories.containsKey(item.category)){
-//       List<String> po = categories[item.category];
-//       po.add(item.name);
-//       categories.update(item.category, (value) => po);
-//     }
-//     else{
-//       List<String> no = [item.name];
-//       categories[item.category] = no;
-//     }
-//     print(categories);
-//     setState(() {
-      
-//     });
-//   }
-
-
-//     return Scaffold(
-//       body: Container(
-//         padding: EdgeInsets.all(20),
-//         child: Form(
-//           key: _formKey,
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               TextFormField(
-//                 controller: _controller,
-//                 onChanged: (value) {
-//                   name = value;
-//                 },
-
-//               ),
-//               IconButton(
-//                 icon: Icon(Icons.check) ,
-//                 onPressed: (){
-//                   _controller.clear();
-//                   String cat = containItem(db, name);
-//                   foodItem = FoodItem(name: name, category: cat); 
-//                   addItem(foodItem);
-//                   Navigator.pop(context);
-              
-//                 },
-//               )
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-    
-//   }
-
-  
-
-//   containItem(Map db, String food){
-//     String result = "Uncategorized";
-    
-    
-//     db.forEach((k, v) {
-//       List<String> value = v;
-//       if (value.contains(food)){
-//         result = k; 
-//       }
-        
-//     });
-    
-//     return result;   
-//   }
-// }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoppinglist/models/user.dart';
 import 'package:shoppinglist/allLists.dart';
+import 'package:shoppinglist/testdatabase.dart';
 
 void main() {
   runApp(
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: AllList(),
+      home: Testing()
+      // AllList(),
     );
   }
 }
