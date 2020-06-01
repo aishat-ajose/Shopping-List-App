@@ -13,28 +13,24 @@ class Testing extends StatefulWidget {
 class _TestingState extends State<Testing> {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Container(
         alignment: Alignment.center,
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: 50),
             IconButton(
               icon: Icon(Icons.create), 
               onPressed: (){
-                Random random = Random();
-                List<String> items = ["Garri", "Tomato", "Rice", "Sugar", "potato", "Fish", "Test"];
-                String otem = items.join(",");
-                print(otem.split(","));
-                UserList userList = UserList(
-                  listItems: otem,
-                  listName: "Tuu",
-                  id: random.nextInt(1000)                 
-                );
-                DatabaseService().createUserList(userList);
-                setState(() {});
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ListForm()));
+              //   Random random = Random();
+              //   UserList userList = UserList(
+              //     listName: "Tuu",
+              //     id: random.nextInt(1000)                 
+              //   );
+              //   DatabaseService().createUserList(userList);
+              //   setState(() {});
               },
             ),
             
@@ -48,9 +44,6 @@ class _TestingState extends State<Testing> {
 
             Container(
               margin: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                border: Border.all(style: BorderStyle.solid)
-              ),
               height: MediaQuery.of(context).size.height - 200,
               child: FutureBuilder(
                 future: DatabaseService().getUserLists(),
@@ -87,7 +80,15 @@ class _TestingState extends State<Testing> {
               children: [
                 Text((index+1).toString() + "."),
                 SizedBox(width: 15,),
-                Text(userlist.id.toString(), style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold),),
+                Text(userlist.listName, style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold),),
+                SizedBox(width: 50,),
+                Text(userlist.listItems== null ? "0": userlist.listItems.split(",").length.toString(), style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold),),
+                SizedBox(width: 50,),
+                IconButton(icon: Icon(Icons.delete), onPressed: () {
+                  setState(() {
+                    DatabaseService().deleteUserList(userlist.id);
+                  });
+                } )
               ],
             ),
           ),
@@ -95,5 +96,43 @@ class _TestingState extends State<Testing> {
           SizedBox(height: 20,),
         ],
       );
+  }
+}
+
+class  ListForm extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _controller = new TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    String name;
+    return Scaffold(
+      body: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextFormField(
+              controller: _controller,
+              onChanged: (value) {
+                name = value;
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.check) ,
+              onPressed: (){
+                _controller.clear();
+                Random random = Random();
+                UserList userList = UserList(
+                  listName: name,
+                  id: random.nextInt(1000)                 
+                );
+                DatabaseService().createUserList(userList);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Testing()));
+              },
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
