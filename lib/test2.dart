@@ -12,6 +12,11 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
+  TextEditingController _controller = TextEditingController();
+
+  String words;
+  List<String> lis = ["Mango", "Fish", "Meat","Chicken","Rice", "Garri", "Beans"];
+  List<String> filtered = [];
 
   Map db = {
     "Poultry": ["Fish", "Meat","Chicken"],
@@ -71,22 +76,127 @@ class _TestPageState extends State<TestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        backgroundColor: Colors.blue,
+        elevation: 0.0,
         title: Text(widget.userList.listName),
       ),
-      body:  Container(
-        margin: EdgeInsets.symmetric(horizontal:25),
-        child: items == null ? Container(child: Text("No data")) : categories == null ? Container(child: Text("No data"),) : ListView.builder(                
-          physics: const AlwaysScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: categories.length,
-          itemBuilder: (context, index){
-            String key = categories.keys.elementAt(index);
-            return  _buildCategory(key, categories[key], widget.userList);
-          }
-        ),
+      body:  Column(
+        children: [
+          Container(
+              color: Colors.blue,
+              padding: EdgeInsets.all(10),
+              child: Container(
+                height: 55,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: new BorderRadius.circular(15.0),
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1.0
+                  ),
+                ),
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: TextField(
+                        controller: _controller,
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,                    
+                          filled: true,  
+                          hintText: 'Search',
+                          border: InputBorder.none
+                        ),
+                        onChanged: (String text){
+                          
+                          setState((){
+                            print(text);
+                            if(text.length <= 0){filtered = null;}
+                            else{
+                              filtered = lis.where((element) { 
+                              print(element);
+                              return element.toLowerCase().contains(text.toLowerCase());
+                            }).toList();
+                            }
+                            
+                          });
+                          
+                        }
+                      ),
+                    ),
+                    IconButton(icon: Icon(Icons.keyboard_voice, color: Colors.black87,), onPressed: (){
+
+                    }),
+                    IconButton(icon: Icon(Icons.clear, color: Colors.black87,), onPressed: () =>_controller.clear()),
+                    IconButton(icon: Icon(Icons.check, color: Colors.black87,), onPressed: (){
+                      setState((){
+                          filtered=null;
+                          String name = _controller.text;
+                          UserList _userList = UserList(
+                            id: widget.userList.id,
+                            listName: widget.userList.listName,
+                            listItems: widget.userList.listItems == null ? name : widget.userList.listItems + ",$name",
+                            );
+                          DatabaseService().updateUserList(_userList);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> TestPage(_userList)));
+                      });
+                    
+                    print("Sent");
+                    _controller.clear();
+                    }),
+                  ],
+                ),
+              ),
+          ),
+          Stack(
+            children: [
+              Container(
+                margin: EdgeInsets.symmetric(horizontal:25),
+                child: items == null ? Container(child: Text("No data")) : categories == null ? Container(child: Text("No data"),) : ListView.builder(                
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: categories.length,
+                  itemBuilder: (context, index){
+                    String key = categories.keys.elementAt(index);
+                    return  _buildCategory(key, categories[key], widget.userList);
+                  }
+                ),
+              ),
+              filtered != null && filtered.length > 0 ? Container(
+                margin: EdgeInsets.all(5),
+                width: MediaQuery.of(context).size.width,
+                height: 150,
+                child: Card(
+                  elevation: 20,
+                  child: ListView.builder(
+                    itemCount: filtered.length,
+                    itemBuilder:(context, index){
+                      return  GestureDetector(
+                        onTap: (){
+                          UserList _userList = UserList(
+                            id: widget.userList.id,
+                            listName: widget.userList.listName,
+                            listItems: widget.userList.listItems == null ? filtered[index] : widget.userList.listItems + ",${filtered[index]}",
+                            );
+                            filtered=null;
+                          DatabaseService().updateUserList(_userList);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> TestPage(_userList)));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Text(filtered[index])),
+                      );
+                    }
+                  )
+                ),
+              ): Container()
+            ],
+            
+          ),
+        ],
       ),
-      floatingActionButton: MyFloatingActionButton(widget.userList),
     );
   }
 
@@ -142,59 +252,6 @@ class _TestPageState extends State<TestPage> {
     );
   }
 }
-
-
-
-
-class MyFloatingActionButton extends StatelessWidget  {
-  final UserList userList;
-  MyFloatingActionButton(this.userList);
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _controller = new TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {  
-    String name;
-    return FloatingActionButton(
-      onPressed: () {
-        showBottomSheet(
-          backgroundColor: Colors.cyanAccent,
-          context: context,
-          builder: (context) => Container(
-            padding: EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _controller,
-                    onChanged: (value) {
-                      name = value;
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.check) ,
-                    onPressed: () async{  
-                      _controller.clear();
-                      UserList _userList = UserList(
-                        id: userList.id,
-                        listName: userList.listName,
-                        listItems: userList.listItems == null ? name : userList.listItems + ",$name",
-                        );
-                      await DatabaseService().updateUserList(_userList);
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> TestPage(_userList)));
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
 
 
 

@@ -3,15 +3,17 @@ import 'package:provider/provider.dart';
 import 'package:shoppinglist/models/user.dart';
 import 'package:shoppinglist/allLists.dart';
 import 'package:shoppinglist/testdatabase.dart';
+import 'package:shoppinglist/textSearch.dart';
 
 void main() {
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => User()),
-      ],
-      child: MyApp(),
-    )
+    MyApp(),
+    // MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(create: (context) => User()),
+    //   ],
+      
+    // )
     
     );
 }
@@ -21,8 +23,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: Testing()
+      home: 
+      // TestSearch()
+      Testing()
       // AllList(),
     );
   }
