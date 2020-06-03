@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:speech_recognition/speech_recognition.dart';
 // import 'package:search_widget/search_widget.dart';
 
 class TestSearch extends StatefulWidget {
@@ -13,6 +15,101 @@ class _TestSearchState extends State<TestSearch> {
   String words;
   List<String> lis = ["mango", 'rice', 'milk', "chicken"];
   List<String> filtered = [];
+
+  SpeechRecognition _speech;
+  bool _speechRecognitionAvailable = false;
+  bool _isListening = false;
+
+  String transcription = '';
+
+  getTranscript(){
+    activateSpeechRecognizer();
+    print("list - $_isListening");
+    print("avali  - $_speechRecognitionAvailable");
+
+    _speechRecognitionAvailable && !_isListening
+    ? start()
+    :stop();
+    // if (_speechRecognitionAvailable && !_isListening){print("Listening");start();}
+    // else{stop()}
+
+    
+  }
+
+  void activateSpeechRecognizer() {
+    requestPermission();
+
+    _speech = new SpeechRecognition();
+    _speech.setAvailabilityHandler((result){
+      setState(() {
+        _speechRecognitionAvailable = result;
+      });
+    });
+    _speech.setCurrentLocaleHandler(onCurrentLocale);
+    _speech.setRecognitionStartedHandler(onRecognitionStarted);
+    _speech.setRecognitionResultHandler(onRecognitionResult);
+    _speech.setRecognitionCompleteHandler(onRecognitionComplete);
+    _speech
+        .activate()
+        .then((res) => setState(() => _speechRecognitionAvailable = res));
+  }
+
+  void start(){
+    _speech
+        .listen(locale: 'en_US')
+        .then((result) {
+          print('Started listening => result $result');
+      }
+      );
+
+  }
+
+  void cancel() {
+    _speech.cancel().then((result) {
+      setState(() {
+        _isListening = result;
+      }
+      );
+    });
+  }
+
+
+  void stop() {
+    _speech.stop().then((result) {
+      setState(() {
+        _isListening = result;
+      });
+    });
+  }
+
+  void onSpeechAvailability(bool result) =>
+      setState(() => _speechRecognitionAvailable = result);
+
+  void onCurrentLocale(String locale) =>
+      setState(() => print("current locale: $locale"));
+
+  void onRecognitionStarted() => setState(() => _isListening = true);
+
+  void onRecognitionResult(String text) {
+    setState(() {
+      transcription = text;
+      _controller.text = text;
+
+      //stop(); //stop listening now
+    });
+  }
+
+  void onRecognitionComplete() => setState(() => _isListening = false);
+
+  void requestPermission() async {
+    PermissionStatus permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.microphone);
+
+    if (permission != PermissionStatus.granted) {
+      await PermissionHandler()
+          .requestPermissions([PermissionGroup.microphone]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +166,7 @@ class _TestSearchState extends State<TestSearch> {
                       ),
                     ),
                     IconButton(icon: Icon(Icons.keyboard_voice, color: Colors.black87,), onPressed: (){
-
+                        getTranscript();
                     }),
                     IconButton(icon: Icon(Icons.clear, color: Colors.black87,), onPressed: () =>_controller.clear()),
                     IconButton(icon: Icon(Icons.check, color: Colors.black87,), onPressed: (){

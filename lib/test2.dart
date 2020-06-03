@@ -13,6 +13,7 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   TextEditingController _controller = TextEditingController();
+  GlobalKey _scaffoldState=GlobalKey();
 
   String words;
   List<String> lis = ["Mango", "Fish", "Meat","Chicken","Rice", "Garri", "Beans"];
@@ -76,6 +77,7 @@ class _TestPageState extends State<TestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldState,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -112,11 +114,9 @@ class _TestPageState extends State<TestPage> {
                         onChanged: (String text){
                           
                           setState((){
-                            print(text);
                             if(text.length <= 0){filtered = null;}
                             else{
                               filtered = lis.where((element) { 
-                              print(element);
                               return element.toLowerCase().contains(text.toLowerCase());
                             }).toList();
                             }
@@ -142,9 +142,7 @@ class _TestPageState extends State<TestPage> {
                           DatabaseService().updateUserList(_userList);
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> TestPage(_userList)));
                       });
-                    
-                    print("Sent");
-                    _controller.clear();
+                      _controller.clear();
                     }),
                   ],
                 ),
