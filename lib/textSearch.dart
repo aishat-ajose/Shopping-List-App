@@ -22,18 +22,41 @@ class _TestSearchState extends State<TestSearch> {
 
   String transcription = '';
 
-  getTranscript(){
+  // getTranscript(){
+  //   activateSpeechRecognizer();
+  //   print("list - $_isListening");
+  //   print("avali  - $_speechRecognitionAvailable");
+
+  //   _buildVoiceInput(
+  //         onPressed: (){
+  //            activateSpeechRecognizer();
+  //           print("list - $_isListening");
+  //           print("avali  - $_speechRecognitionAvailable");
+  //            if(_speechRecognitionAvailable && !_isListening){
+  //              print("start now");
+  //              start();
+  //            }
+  //            else{
+  //              print("stop now");
+  //              stop();
+  //            }
+  //         } ,
+
+  //         label: _isListening ? 'Listening...' : '',
+  //         );
+
+  //   // if (_speechRecognitionAvailable && !_isListening){print("Listening");start();}
+  //   // else{stop()}
+
+    
+  // }
+
+  @override
+  void initState() {
+    super.initState();
     activateSpeechRecognizer();
     print("list - $_isListening");
     print("avali  - $_speechRecognitionAvailable");
-
-    _speechRecognitionAvailable && !_isListening
-    ? start()
-    :stop();
-    // if (_speechRecognitionAvailable && !_isListening){print("Listening");start();}
-    // else{stop()}
-
-    
   }
 
   void activateSpeechRecognizer() {
@@ -55,6 +78,7 @@ class _TestSearchState extends State<TestSearch> {
   }
 
   void start(){
+    print("Starting");
     _speech
         .listen(locale: 'en_US')
         .then((result) {
@@ -75,6 +99,7 @@ class _TestSearchState extends State<TestSearch> {
 
 
   void stop() {
+    print("Stopping");
     _speech.stop().then((result) {
       setState(() {
         _isListening = result;
@@ -166,7 +191,21 @@ class _TestSearchState extends State<TestSearch> {
                       ),
                     ),
                     IconButton(icon: Icon(Icons.keyboard_voice, color: Colors.black87,), onPressed: (){
-                        getTranscript();
+                        _buildVoiceInput(
+                            onPressed: (){
+                              if(_speechRecognitionAvailable && !_isListening){
+                                print("start now");
+                                start();
+                              }
+                              else{
+                                print("stop now");
+                                stop();
+                              }
+                            } ,
+
+                            label: _isListening ? 'Listening...' : '',
+                            );
+
                     }),
                     IconButton(icon: Icon(Icons.clear, color: Colors.black87,), onPressed: () =>_controller.clear()),
                     IconButton(icon: Icon(Icons.check, color: Colors.black87,), onPressed: (){
@@ -205,6 +244,25 @@ class _TestSearchState extends State<TestSearch> {
         ],
         ),    
     );
+  }
+
+  Widget _buildVoiceInput({String label, VoidCallback onPressed}){
+   return  Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          children: [
+            Container(
+              child: Text(
+                label,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.mic),
+              onPressed: onPressed,
+            ),
+          ],
+        ));
   }
 }
 

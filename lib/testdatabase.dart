@@ -24,7 +24,7 @@ class _TestingState extends State<Testing> {
         elevation: 0.0,
         title: Text("All List"),
       ),
-      body: Column(
+      body: ListView(
         children: [
           Container(
               color: Colors.blue,
