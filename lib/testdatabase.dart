@@ -67,7 +67,7 @@ class _TestingState extends State<Testing> {
                       setState((){
                           Random random = Random();
                           UserList userList = UserList(
-                            listName: name,
+                            listName: name ?? "UnNamed List",
                             id: random.nextInt(1000)                 
                           );
                           DatabaseService().createUserList(userList);
@@ -96,31 +96,6 @@ class _TestingState extends State<Testing> {
                     },
                   ),
                 )
-          // Container(
-          //   alignment: Alignment.center,
-          //   child: Column(
-          //     children: [
-          //       SizedBox(height: 50),
-          //       IconButton(
-          //         icon: Icon(Icons.create), 
-          //         onPressed: (){
-          //           Navigator.push(context, MaterialPageRoute(builder: (context)=> ListForm()));
-          //         },
-          //       ),
-                
-          //       IconButton(
-          //         icon: Icon(Icons.delete),
-          //         onPressed: (){
-          //           DatabaseService().deleteUserLists();
-          //           setState(() {});
-          //         },
-          //       ),
-
-                
-          //     ],
-          //   ),
-            
-          // ),
         ],
       ),
     );

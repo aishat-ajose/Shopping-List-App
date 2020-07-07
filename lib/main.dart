@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shoppinglist/models/user.dart';
-import 'package:shoppinglist/allLists.dart';
+//import 'package:provider/provider.dart';
+//import 'package:shoppinglist/models/user.dart';
+//import 'package:shoppinglist/allLists.dart';
 import 'package:shoppinglist/testdatabase.dart';
-import 'package:shoppinglist/textSearch.dart';
-import 'package:shoppinglist/voicerec.dart';
+//import 'package:shoppinglist/textSearch.dart';
+//import 'package:shoppinglist/voicerec.dart';
 
 void main() {
   runApp(
@@ -13,7 +13,6 @@ void main() {
     //   providers: [
     //     ChangeNotifierProvider(create: (context) => User()),
     //   ],
-      
     // )    
     );
 }
